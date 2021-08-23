@@ -1,8 +1,5 @@
-import { GraphQLClient } from "graphql-request";
-
-const graphcms = new GraphQLClient(
-  `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}/?access_token=${process.env.CONTENTFUL_ACCESS_TOKEN}`
-);
+import { useRouter } from "next/router";
+import { getClient } from "../../client";
 
 export const buildSlugFromParams = (obj) => {
   let string = obj.pid;
@@ -14,13 +11,15 @@ export const buildSlugFromParams = (obj) => {
   return string;
 };
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps({ params, preview = false }) {
   const slug = buildSlugFromParams(params);
 
-  const { pageCollection } = await graphcms.request(
+  const client = getClient(preview);
+
+  const { pageCollection } = await client.request(
     `
       query Page {
-        pageCollection (where: {slug: "${slug}"}) {
+        pageCollection (where: {slug: "${slug}"}, preview: ${preview}) {
           items {
             title
             slug
@@ -38,13 +37,15 @@ export async function getStaticProps({ params }) {
 
   return {
     props: {
-      page: pageCollection.items[0],
+      page: pageCollection.items[0] || null,
     },
   };
 }
 
 export async function getStaticPaths() {
-  const { pageCollection } = await graphcms.request(
+  const client = getClient();
+
+  const { pageCollection } = await client.request(
     `
       query Page {
         pageCollection {
@@ -82,6 +83,7 @@ export async function getStaticPaths() {
 }
 
 const Page = (props) => {
+  const { isPreview } = useRouter();
   const { page } = props;
 
   if (!page) {
@@ -92,6 +94,13 @@ const Page = (props) => {
     <div>
       <h1>{page.title}</h1>
       {JSON.stringify(page)}
+      {isPreview && (
+        <p>
+          <a href={`${process.env.BASE_URL}/api/preview-end?slug=${page.slug}`}>
+            Exit Preview
+          </a>
+        </p>
+      )}
     </div>
   );
 };
