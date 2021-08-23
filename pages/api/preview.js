@@ -2,7 +2,7 @@ const handler = (req, res) => {
   // Check the secret and next parameters
   // This secret should only be known to this API route and the CMS
   // if (
-  //   req.query.secret !== process.env.CONTENTFUL_ACCESS_TOKEN_PREVIEW ||
+  //   req.query.secret !== process.env.CONTENTFUL_PREVIEW_ACCESS_TOKEN ||
   //   !req.query.slug
   // ) {
   //   return res.status(401).json({ message: "Invalid token" });
