@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { getClient } from "../../client";
+import { client, getClient } from "../../client";
 
 export const buildSlugFromParams = (obj) => {
   let string = obj.pid;
@@ -43,8 +43,6 @@ export async function getStaticProps({ params, preview = false }) {
 }
 
 export async function getStaticPaths() {
-  const client = getClient();
-
   const { pageCollection } = await client.request(
     `
       query Page {
