@@ -1,18 +1,8 @@
 import { useRouter } from "next/router";
-import { client, getClient } from "../../client";
-
-export const buildSlugFromParams = (obj) => {
-  let string = obj.pid;
-
-  if (obj.slug) {
-    string = `${string}/${obj.slug.join("/")}`;
-  }
-
-  return string;
-};
+import { client, getClient } from "../client";
 
 export async function getStaticProps({ params, preview = false }) {
-  const slug = buildSlugFromParams(params);
+  const slug = params.slug.join("/");
 
   const client = getClient(preview);
 
@@ -64,14 +54,9 @@ export async function getStaticPaths() {
 
   return {
     paths: pageCollection.items.map((page) => {
-      const paramsArray = page.slug.split("/");
-
-      const [pid, ...rest] = paramsArray;
-
       return {
         params: {
-          pid: pid,
-          slug: rest,
+          slug: page.slug.split("/"),
         },
       };
     }),
