@@ -79,7 +79,7 @@ const Page = (props) => {
       {JSON.stringify(page)}
       {isPreview && (
         <p>
-          <a href={`${process.env.BASE_URL}/api/preview-end?slug=${page.slug}`}>
+          <a href={`${process.env.NEXT_PUBLIC_BASE_URL}/api/preview-end?slug=${page.slug}`}>
             Exit Preview
           </a>
         </p>
